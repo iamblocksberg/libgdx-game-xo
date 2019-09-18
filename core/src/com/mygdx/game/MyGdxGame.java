@@ -313,7 +313,6 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 
         if (isWin) {
             isGameEnd = true;
-            isYourTurn = false;
             gameStatusText = (isPlayer) ? "YOU WIN!" : "YOU LOSE!";
         } else {
             // Check Draw
@@ -326,7 +325,6 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 
             if (countClickedButton == buttonCount) {
                 isGameEnd = true;
-                isYourTurn = false;
                 gameStatusText = "DRAW!";
             }
         }
