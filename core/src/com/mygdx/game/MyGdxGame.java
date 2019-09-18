@@ -2,7 +2,6 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -15,39 +14,26 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import sun.rmi.runtime.Log;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
-	private SpriteBatch batch;
-//    private Texture img;
-    private Texture imgButtonX, imgButtonO, imgButtonEmpty;
-//    private Image spriceGrid; // sprite, spriceButton1, spriceButton2, spriceButton3;
-    private BitmapFont gameStatusFont; // font,
-//    private String textStatus = "";
-//	private Button button1 = new Button();
     private Stage stage;
+    private SpriteBatch batch;
+    private BitmapFont gameStatusFont;
+    private Texture imgButtonX, imgButtonO, imgButtonEmpty;
     private Integer gridSize = 10;
     private Integer buttonSize = 120;
     private Integer buttonCount = 9;
-    //    private String[] buttonStatus;
-//    private Image[] imageButtons = new Image[buttonCount];
-    private String buttonNamePrefix = "button_";
-    //    private String gameStatus = "draw";
-    private Boolean isYourTurn = true;
-    private Boolean isGameEnd = false;
     private Float botThinkingTime = 1f;
     private Float botThinkingTimeCurrent = 0f;
+    private String buttonNamePrefix = "button_";
+    private Boolean isYourTurn = true;
+    private Boolean isGameEnd = false;
     private Map<Integer, Integer[]> mapLineLogic = new HashMap<>();
     private Map<String, Image> mapButtonImage = new HashMap<>();
 
@@ -57,7 +43,16 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 
 	@Override
 	public void create () {
-	    // Logic
+		batch = new SpriteBatch();
+        stage = new Stage(new ScreenViewport());
+        Group group = new Group();
+
+        gameStatusFont = new BitmapFont();
+        gameStatusFont.setColor(Color.WHITE);
+
+
+
+        // Logic
         // Horizontal
         mapLineLogic.put(0, new Integer[]{0, 1, 2});
         mapLineLogic.put(1, new Integer[]{3, 4, 5});
@@ -70,48 +65,27 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
         mapLineLogic.put(6, new Integer[]{0, 4, 8});
         mapLineLogic.put(7, new Integer[]{2, 4, 6});
 
-		batch = new SpriteBatch();
-//		img = new Texture("badlogic.jpg");
-//		sprite = new Sprite(img);
-//		sprite.setPosition(
-//				Gdx.graphics.getWidth()/2 - sprite.getWidth()/2,
-//				Gdx.graphics.getHeight()/2 - sprite.getHeight()/2
-//		);
-//		font = new BitmapFont();
-//		font.setColor(Color.WHITE);
-        gameStatusFont = new BitmapFont();
-        gameStatusFont.setColor(Color.WHITE);
 
-//		button1.setColor(Color.CORAL);
-//		button1.setName("Holaaaa");
-//		button1.setPosition(100, 100);
 
-		stage = new Stage(new ScreenViewport());
-		Group group = new Group();
-
+        // Texture
 		Texture imgGrid;
 		imgGrid = new Texture("xo-grid.png");
 		imgButtonX = new Texture("xo-button-x.png");
 		imgButtonO = new Texture("xo-button-o.png");
 		imgButtonEmpty = new Texture("xo-button-empty.png");
 
-		Image spriceGrid;
-		spriceGrid = new Image(imgGrid);
-//		spriceGrid.setOrigin(0, 0);
-		spriceGrid.setName("grid");
-		spriceGrid.setPosition(0, 0);
-//		spriceGrid.setPosition(spriceGrid.getWidth() / 2, spriceGrid.getHeight() / 2);
-		group.addActor(spriceGrid);
+		Image spriteGrid;
+        spriteGrid = new Image(imgGrid);
+        spriteGrid.setName("grid");
+        spriteGrid.setPosition(0, 0);
+		group.addActor(spriteGrid);
 
-//		Array<Image> imageButtons = new Array<Image>();
+
+
+		// init button
 		int buttonCurrentCol = 0;
 		int buttonCurrentRow = 0;
 		for (int i = 0; i < buttonCount; i++) {
-//			imageButtons[i] = new Image(imgButtonX);
-//			imageButtons[i].setName(name);
-//			imageButtons[i].setPosition((gridSize * buttonCurrentCol) + gridSize + (buttonSize * buttonCurrentCol), (gridSize * buttonCurrentRow) + gridSize + (buttonSize * buttonCurrentRow));
-//			group.addActor(imageButtons[i]);
-
             String name = buttonNamePrefix + i;
             Image image = new Image(imgButtonEmpty);
 			image.setName(name);
@@ -127,51 +101,23 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 				buttonCurrentCol = 0;
 				buttonCurrentRow++;
 			}
-
 		}
 
-//		spriceButton1 = new Image(imgButtonEmpty);
-//		spriceButton1.setName("button1");
-//		spriceButton1.setPosition(gridSize, gridSize);
-////		spriceButton1.setOrigin(0, 0);
-//		spriceButton1.setDrawable(new SpriteDrawable(new Sprite(imgButtonO)));
-
 		group.setOrigin(0, 0);
-//		group.setPosition(0, 0);
-		group.setPosition(Gdx.graphics.getWidth() / 2f - spriceGrid.getWidth() / 2, Gdx.graphics.getHeight() / 2f - spriceGrid.getHeight() / 2);
-//		group.addActor(spriceButton1);
+		group.setPosition(Gdx.graphics.getWidth() / 2f - spriteGrid.getWidth() / 2, Gdx.graphics.getHeight() / 2f - spriteGrid.getHeight() / 2);
 		stage.addActor(group);
 
-        randomTurn();
 
+
+        randomTurn();
 		Gdx.input.setInputProcessor(this);
 	}
 
 	@Override
 	public void render () {
 
-//		textStatus = "Hola";
-
-//		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-////			sprite.setPosition(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY());
-////			textStatus = "Pressed " + Gdx.input.getX() + " , " + Gdx.input.getY();
-//			Gdx.app.log("click", "pressed");
-//		}
-
-//		if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-//			textStatus = "Just Pressed";
-//			Gdx.app.log("click", "just pressed");
-//		}
-
-//		if (Gdx.input.isTouched()) {
-////			textStatus = "Touched " + Gdx.input.getX() + " , " + Gdx.input.getY();
-//		}
-
-//		if (Gdx.input.isTouched()) {
-//			System.out.println("Input occurred at x=" + Gdx.input.getX() + ", y=" + Gdx.input.getY());
-//		}
-
-
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (!isGameEnd) {
             if (isYourTurn) {
@@ -188,13 +134,10 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
             }
         }
 
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+
+        // draw text
 		batch.begin();
-//		batch.draw(sprite, sprite.getX(), sprite.getY());
-//		batch.draw(spriceButton1, spriceButton1.getX(), spriceButton1.getY());
-//		font.draw(batch, textStatus, 20, 30);
         gameStatusFont.getData().setScale(2f);
         gameStatusFont.draw(batch, gameStatusText, Gdx.graphics.getWidth() / 2f - 150, Gdx.graphics.getHeight() - 70, 300, Align.center, false);
 
@@ -204,11 +147,9 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
         }
 
 		batch.end();
-
-//		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
 
-        // Draw line win
+        // Draw line row win
         if (lineWinPosition[0] != null) {
             ShapeRenderer shapeRenderer = new ShapeRenderer();
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -241,7 +182,6 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-//		textStatus = "touchDown";
 
         if (isGameEnd) {
             restart();
@@ -251,10 +191,6 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
                 Actor hitActor = stage.hit(coords.x, coords.y, false);
 
                 if (hitActor != null) {
-//			        hitActor .setDrawable(new SpriteDrawable(new Sprite(imgButtonO)));
-//                  imageButtons[0].setDrawable(new SpriteDrawable(new Sprite(imgButtonO)));
-
-//                textStatus = "Hit " + hitActor.getName();
                     String actorName = hitActor.getName();
 
                     if (actorName.contains(buttonNamePrefix)) {
@@ -265,6 +201,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
         }
 
 		return true;
+
 	}
 
 	@Override
@@ -309,16 +246,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
     }
 
 	private int getBotAnswerButtonNum() {
-        List<Integer> availableButton = new ArrayList<Integer>();
-
-//	    for (int i = 0; i < mapButtonStatus.size(); i++) {
-//	        if (mapButtonStatus.get(buttonNamePrefix + i).equals("")) {
-//                availableButton.add(i);
-//            }
-//        }
-
-//	    @TODO Smart Random 1. Check if i has 3 point? next check player has 3 point? next check i has 2point and 1
-
+        List<Integer> availableButton = new ArrayList<>();
         int result = -1;
 
         for (Integer i = 0; i < mapLineLogic.size(); i++) {
@@ -402,7 +330,6 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
                 gameStatusText = "DRAW!";
             }
         }
-
     }
 
 	private void updateButtonStatus(String buttonName, Boolean isPlayer) {
@@ -420,8 +347,6 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
             mapButtonImage.get(buttonName).setDrawable(new SpriteDrawable(new Sprite(texture)));
 
             checkWin(isPlayer);
-
-//            textStatus = "Update " + buttonName;
         }
     }
 
